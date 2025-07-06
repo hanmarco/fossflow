@@ -46,6 +46,7 @@ function App() {
   const [currentDiagram, setCurrentDiagram] = useState<SavedDiagram | null>(null);
   const [diagramName, setDiagramName] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const diagramNameInputRef = useRef<HTMLInputElement>(null);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   
   const [fossflowKey, setFossflowKey] = useState(0); // Key to force re-render of FossFLOW
@@ -375,6 +376,13 @@ function App() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
+  // Focus on the input field when the save dialog opens
+  useEffect(() => {
+    if (showSaveDialog && diagramNameInputRef.current) {
+      diagramNameInputRef.current.focus();
+    }
+  }, [showSaveDialog]);
+
   return (
     <div className="App">
       <div className="toolbar">
@@ -440,7 +448,7 @@ function App() {
               value={diagramName}
               onChange={(e) => setDiagramName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && saveDiagram()}
-              autoFocus
+              ref={diagramNameInputRef}
             />
             <div className="dialog-buttons">
               <button onClick={saveDiagram}>Save</button>
