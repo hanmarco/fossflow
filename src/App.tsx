@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Isoflow } from 'fossflow';
 import { flattenCollections } from '@isoflow/isopacks/dist/utils';
 import isoflowIsopack from '@isoflow/isopacks/dist/isoflow';
@@ -114,6 +114,50 @@ function App() {
     }
   }, []);
 
+  // Setup menu event listeners for Electron
+  useEffect(() => {
+    const setupListeners = () => {
+      if (window.electron && window.electron.ipcRenderer) {
+        try {
+          // New Diagram menu item
+          window.electron.ipcRenderer.on('menu-new-diagram', () => {
+            newDiagram();
+          });
+
+          // Open File menu item
+          window.electron.ipcRenderer.on('menu-open-file', () => {
+            handleOpenFile();
+          });
+
+          // Save File menu item
+          window.electron.ipcRenderer.on('menu-save-file', () => {
+            handleSaveFile();
+          });
+        } catch (error) {
+          console.error('IPC 리스너 등록 중 오류:', error);
+        }
+      } else {
+        // 1초 후 다시 시도
+        setTimeout(setupListeners, 1000);
+      }
+    };
+
+    setupListeners();
+
+    // Cleanup listeners on unmount
+    return () => {
+      if (window.electron && window.electron.ipcRenderer) {
+        try {
+          window.electron.ipcRenderer.removeAllListeners('menu-new-diagram');
+          window.electron.ipcRenderer.removeAllListeners('menu-open-file');
+          window.electron.ipcRenderer.removeAllListeners('menu-save-file');
+        } catch (error) {
+          console.error('IPC 리스너 정리 중 오류:', error);
+        }
+      }
+    };
+  }, []);
+
     // Save diagrams to localStorage whenever they change
   useEffect(() => {
     try {
@@ -223,7 +267,7 @@ function App() {
     }
   };
 
-  const newDiagram = () => {
+  const newDiagram = useCallback(() => {
     const message = hasUnsavedChanges 
       ? 'You have unsaved changes. Export your diagram first to save it. Continue?'
       : 'Create a new diagram?';
@@ -248,7 +292,7 @@ function App() {
       localStorage.removeItem('fossflow-last-opened');
       localStorage.removeItem('fossflow-last-opened-data');
     }
-  };
+  }, [hasUnsavedChanges, defaultColors]);
 
   const handleModelUpdated = (model: any) => {
     // Store the current model state whenever it updates
@@ -277,7 +321,7 @@ function App() {
     });
   };
 
-  const handleOpenFile = async () => {
+  const handleOpenFile = useCallback(async () => {
     const result = await window.electron.ipcRenderer.invoke('open-file-dialog');
     if (result) {
       const { content } = result;
@@ -300,9 +344,9 @@ function App() {
         alert('Invalid JSON file. Please check the file format.');
       }
     }
-  };
+  }, [defaultColors]);
 
-  const handleSaveFile = async () => {
+  const handleSaveFile = useCallback(async () => {
     const exportData = {
       title: diagramName || currentModel?.title || diagramData.title || 'Exported Diagram',
       icons: icons,
@@ -317,7 +361,7 @@ function App() {
       alert(`Diagram saved to ${filePath}`);
       setHasUnsavedChanges(false);
     }
-  };
+  }, [diagramName, currentModel, diagramData]);
 
   
   
