@@ -2,7 +2,7 @@
   "name": "fossflow-local",
   "version": "1.0.0",
   "private": true,
-  "main": "main.js",
+  "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
     "@isoflow/isopacks": "^0.0.10",
