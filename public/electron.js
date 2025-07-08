@@ -24,6 +24,12 @@ function createWindow() {
   win.on('closed', () => {
     app.quit();
   });
+
+  // 우측 상단 X 버튼 클릭 시 앱 종료
+  win.on('close', (event) => {
+    event.preventDefault();
+    app.quit();
+  });
 }
 
 app.whenReady().then(createWindow);
