@@ -39,6 +39,20 @@
       "last 1 safari version"
     ]
   },
+  "build": {
+    "appId": "com.yourcompany.fossflow",
+    "files": [
+      "build/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
