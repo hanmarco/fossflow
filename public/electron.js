@@ -19,14 +19,21 @@ function createWindow() {
       ? 'http://localhost:3000'
       : `file://${path.join(__dirname, '../build/index.html')}`
   );
+
+  // 윈도우가 닫힐 때 앱 종료
+  win.on('closed', () => {
+    app.quit();
+  });
 }
 
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  app.quit();
+});
+
+app.on('before-quit', () => {
+  app.quit();
 });
 
 app.on('activate', () => {
