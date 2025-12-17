@@ -13,15 +13,17 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "cross-env PORT=3000 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron:start": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:build": "npm run build && electron-builder",
-    "electron:build:portable": "npm run build && electron-builder --win portable"
-  },
+    "scripts": {
+      "start": "cross-env PORT=3000 react-scripts start",
+      "build": "react-scripts build",
+      "test": "react-scripts test",
+      "eject": "react-scripts eject",
+    "make:icon": "node scripts/make-icon.js",
+    "set:exe:icon": "node scripts/set-exe-icon.js",
+      "electron:start": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
+      "electron:build": "npm run build && electron-builder",
+      "electron:build:portable": "npm run build && electron-builder --win portable"
+    },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -44,17 +46,35 @@
     "appId": "com.yourcompany.fossflow",
     "files": [
       "build/**/*",
-      "main.js",
+      "public/electron.js",
+      "public/preload.js",
+      "assets/**/*",
       "package.json"
     ],
     "directories": {
       "buildResources": "assets"
     },
+    "icon": "assets/icon.ico",
     "win": {
+      "icon": "assets/icon.ico",
       "target": ["nsis", "portable"]
     }
+    ,
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico"
+    },
+    "portable": {
+      "requestExecutionLevel": "user"
+    }
   },
-  "devDependencies": {
+    "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -68,6 +88,9 @@
     "electron": "^37.2.0",
     "electron-builder": "^26.0.12",
     "typescript": "^4.9.5",
+    "jimp": "^0.16.1",
+    "png-to-ico": "^1.0.0",
+    "rcedit": "^1.1.2",
     "wait-on": "^8.0.3"
+    }
   }
-}
