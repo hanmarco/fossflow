@@ -19,7 +19,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron:start": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron:build": "npm run build && electron-builder"
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:portable": "npm run build && electron-builder --win portable"
   },
   "eslintConfig": {
     "extends": [
@@ -50,7 +51,7 @@
       "buildResources": "assets"
     },
     "win": {
-      "target": "nsis"
+      "target": ["nsis", "portable"]
     }
   },
   "devDependencies": {
